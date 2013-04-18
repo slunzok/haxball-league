@@ -1,0 +1,21 @@
+{% extends "leagues/base.html" %}
+
+{% block content %}
+
+    <div id="splash">
+	
+	    <div class="col5 left">
+	    
+            <h2 class="label label-blue">Delete league</h2><br />
+            
+            <form action="" method="post">{% csrf_token %}
+            <input class="login2" type="submit" name="submit" value="Do it!" />
+            </form> 
+            
+		</div>
+
+		<div class="clearer">&nbsp;</div>
+
+	</div>
+
+{% endblock %}

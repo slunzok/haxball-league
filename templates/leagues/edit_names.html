@@ -1,0 +1,49 @@
+{% extends "leagues/base.html" %}
+
+{% block content %}
+
+    <div id="splash">
+	
+	    <div class="col5 left">
+	    
+            <h2 class="label label-blue">Edit team names</h2><br />
+            
+            {% if contestants_formset.non_form_errors %}
+                <p style="color: red;">{{ contestants_formset.non_form_errors.as_text }}</p>
+            {% endif %}
+            
+            <form action="" method="POST">{% csrf_token %}
+            
+            {{ contestants_formset.management_form }}
+            {% for form in contestants_formset.forms %}
+            <div class="item">
+                {% for field in form.visible_fields %}
+                    {% if field.errors %}
+                        <p>{{ field.label_tag }} <input id="id_{{ field.html_name }}" name="{{ field.html_name }}" type="text" class="rty" /></p>
+                        <div class="clearer">&nbsp;</div>
+                        <p><span class=" quiet small yuo">{{ field.errors.as_text }}</span></p>
+                    {% else %}
+                        <p>{{ field.label_tag }} {{ field }}</p>
+                    {% endif %}
+                {% endfor %}
+                
+                <p>
+                {% for field in form.hidden_fields %}
+                    {{ field }}
+                {% endfor %}
+                </p>
+               <div class="clearer">&nbsp;</div>
+            </div>   
+            {% endfor %}
+            
+            <br />
+            <p><input type="submit" value=" Save!" class="login" /></p>
+            </form>
+
+		</div>
+
+		<div class="clearer">&nbsp;</div>
+
+	</div>
+
+{% endblock %}

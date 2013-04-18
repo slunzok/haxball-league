@@ -1,0 +1,84 @@
+{% extends "leagues/base.html" %}
+
+{% block content %}
+
+    <div id="splash">
+	
+	    <div class="col3 left">
+			
+			<h2 class="label label-blue">New league</h2><br />
+
+            <form action="" method="POST">{% csrf_token %}
+            {% for field in description_form %}
+                {% if field.errors %}
+                    <div class="login_form_row">
+                    {% if field.html_name == 'captcha' %}
+                        <p>{{ field.label_tag }} {{ field }}</p>
+                        <p><span class=" quiet small yuo">{{ field.errors.as_text }}</span></p>
+                    {% else %}
+                        <p>{{ field.label_tag }} <input id="id_{{ field.html_name }}" name="{{ field.html_name }}" type="text" class="rty" /></p>
+                        <p><span class=" quiet small yuo">{{ field.errors.as_text }}</span></p>
+                    {% endif %}
+                    </div>
+                {% else %}
+                    <div class="login_form_row">
+                    <p>{{ field.label_tag }} {{ field }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+    
+            <div class="clearer">&nbsp;</div>
+    
+            {% if teams_num < 4 %}
+                <p><span class="yuo2">* Minumum 4 teams</span></p>
+            {% endif %}
+            
+            {% if teams_num > 20 %}
+                <p><span class="yuo2">* Maximum 20 teams</span></p>
+            {% endif %}
+            
+            {% if contestants_formset.non_form_errors %}
+                <p><span class="yuo2">{{ contestants_formset.non_form_errors.as_text }}</span></p>
+            {% endif %}
+    
+            {{ contestants_formset.management_form }}
+            {% for form in contestants_formset.forms %}
+                {% for field in form %}
+                    {% if field.errors %}
+                        <div class="item">
+                        <p>{{ field.label_tag }} <input id="id_{{ field.html_name }}" name="{{ field.html_name }}" type="text" class="rty" /></p>
+                        <p style="">&nbsp; &nbsp; &nbsp;<a class="delete" href="#">Delete</a></p>
+                        <p><span class=" quiet small yuo">{{ field.errors.as_text }}</span></p>
+                        </div>
+                    {% else %}
+                        <div class="item">
+                        <p>{{ field.label_tag }} {{ field }}</p>
+                        <p style="">&nbsp; &nbsp; &nbsp;<a class="delete" href="#">Delete</a></p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            
+            <p style="text-align: center"><a id="add" href="#">Add team</a></p>
+            <p><input type="submit" value=" Submit " class="login" /></p>
+            </form>
+
+        </div>
+
+		<div class="col4 right">
+			
+			<h2 class="label label-orange">Latest leagues</h2><br />
+			
+			{% for league in last_leagues %}
+                <p><img src="{{ league.country.flag }}"> <a href="{% url 'leagues:detail' league.id %}">{{ league.name }}</a> - {{ league.teams }} teams<br /><span class=" quiet small"> ~ (created: {{ league.created|date:"d.m.Y H:i" }})</span></p>
+            {% endfor %}
+
+			<p><a href="{% url 'leagues:latest' %}" class="more">Show more &raquo;</a></p>
+
+		</div>
+
+		<div class="clearer">&nbsp;</div>
+
+	</div>
+
+{% endblock %}

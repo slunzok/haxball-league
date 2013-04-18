@@ -1,0 +1,42 @@
+{% extends "leagues/base.html" %}
+
+{% block content %}
+
+    <div id="splash">
+	
+	    <div class="col5 left">
+	    
+            <h2 class="label label-blue">Set replay</h2><br />
+            
+            {% if not can_upload_replay %}
+                <p>Only replays higher than version 5!</p>
+            {% endif %}
+
+            <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            
+            {% for field in form %}
+                {% if field.errors %}
+                    <div class="item">
+                    <p>{{ field.label_tag }} <input id="id_{{ field.html_name }}" name="{{ field.html_name }}" type="file" class="rty" /></p>
+                    <div class="clearer">&nbsp;</div>
+                    <p><span class=" quiet small yuo">{{ field.errors.as_text }}</span></p>
+                    </div>
+                {% else %}
+                    <div class="item">
+                    <p>{{ field.label_tag }} {{ field }}</p>
+                    </div>
+                {% endif %}
+                <div class="clearer">&nbsp;</div>
+            {% endfor %}
+  
+            <br />
+            <input type="submit" value="Upload replay!" class="login">
+            </form>
+
+		</div>
+
+		<div class="clearer">&nbsp;</div>
+
+	</div>
+
+{% endblock %}

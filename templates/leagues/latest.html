@@ -1,0 +1,56 @@
+{% extends "leagues/base.html" %}
+
+{% load divide %}
+
+{% block content %}
+
+    <div id="splash">
+	
+	    <div class="col5 left">
+			
+			<h2 class="label label-blue">Latest leagues</h2><br />
+            
+			<table class="data-table2">
+				<tr>
+					<th>League</th>
+					<th>Created</th>
+					<th>Info</th>
+				</tr>
+				{% for league in all_leagues %}
+				    {% if not forloop.counter|divisibleby:2 %}
+                    <tr class="even">
+                    {% else %}
+                    <tr>
+                    {% endif %}
+                    <td><img src="{{ league.country.flag }}"> <a href="{% url 'leagues:detail' league.id %}">{{ league.name }}</a></td>
+                    <td><span class=" quiet small">{{ league.created|date:"d.m.Y H:i" }}</span></td>
+                    <td><span class=" quiet small">{{ league.teams }} teams, {% if league.rounds == 2 %}Double{% endif %} Round Robin</span></td>
+
+                    </tr>
+                {% endfor %}
+			</table>
+			
+			{% if is_paginated %}
+            <div class="pagination">
+                <span class="page-links">
+                    {% if all_leagues.has_previous %}
+                        <a href="?page={{ all_leagues.previous_page_number }}">previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                        Page {{ all_leagues.number }} of {{ all_leagues.paginator.num_pages }}
+                    </span>
+                    {% if all_leagues.has_next %}
+                        <a href="?page={{ all_leagues.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+            </div> 
+            {% endif %}
+            <br />
+
+		</div>
+
+		<div class="clearer">&nbsp;</div>
+
+	</div>
+
+{% endblock %}

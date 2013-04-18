@@ -1,0 +1,43 @@
+{% extends "leagues/base.html" %}
+
+{% block content %}
+
+    <div id="splash">
+	
+	    <div class="col5 left">
+	    
+            <h2 class="label label-blue">Set score</h2><br />
+            <p class="quiet large">{{ results.contestant1 }} - {{ results.contestant2 }}</p>
+            
+            <form action="" method="post">{% csrf_token %}
+            {% for field in form %}
+                {% if field.errors %}
+                <div class="item">
+                    <p>{{ field.label_tag }} <input id="id_{{ field.html_name }}" name="{{ field.html_name }}" type="text" class="rty" /></p>
+                    <div class="clearer">&nbsp;</div>
+                    <p><span class=" quiet small yuo">{{ field.errors.as_text }}</span></p>
+                </div>
+                {% else %}
+                <div class="item">
+                    <p>{{ field.label_tag }} {{ field }}</p>
+                    
+                    {% comment %}
+                    <label for="id_{{ field.html_name }}">{% if field.html_name == 'result1' %}{{ results.contestant1 }}{% else %}{{ results.contestant2 }}{% endif %}</label>
+                    {% endcomment %}
+                </div>
+                {% endif %}
+                
+                <div class="clearer">&nbsp;</div>
+            {% endfor %}
+            
+            <br />
+            <input type="submit" value="Save score!" class="login">
+            </form>
+
+		</div>
+
+		<div class="clearer">&nbsp;</div>
+
+	</div>
+
+{% endblock %}

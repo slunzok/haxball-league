@@ -1,0 +1,98 @@
+{% extends "leagues/base.html" %}
+
+{% load divide %}
+
+{% block content %}
+
+    <div id="splash">
+	
+	    <div class="col5 left">
+			
+			<h2 class="label label-blue">{{ league.name }}</h2><br />
+			<p class="quiet large"><img src="{{ league.country.flag }}"> Created: {{ league.created|date:"d.m.Y H:i" }} &nbsp; - &nbsp; Teams: {{ league.teams }} &nbsp; - &nbsp; System: {% if league.rounds == 1 %}Single{% else %}Double{% endif %} Round Robin</p>
+			
+			{% if visible %}
+                <p><strong><a href="{% url 'leagues:edit_names' league.id %}">Edit team names</a></strong> &nbsp; &nbsp; <strong><a href="{% url 'leagues:delete' league.id %}">Delete league</a></strong></p>
+            {% else %}
+                <form action="{% url 'leagues:pass' league.id %}" method="post">
+                {% csrf_token %}
+                <p><label class="detail">Please enter the password in order to edit the results: </label><input type="text" name="admin_pass" id="haslo" value="" /><input type="submit" value="Send" class="detail" /></p>
+                </form><br /><br />
+            {% endif %}
+            
+			<table class="data-table">
+				<tr>
+					<th></th>
+					<th>Team</th>
+					<th><abbr title="Played">P</abbr></th>
+					<th><abbr title="Won">W</abbr></th>
+					<th><abbr title="Draw">D</abbr></th>
+					<th><abbr title="Lost">L</abbr></th>
+					<th><abbr title="Goals">G</abbr></th>
+					
+					<th><abbr title="Goal difference">+/-</abbr></th>
+					<th><abbr title="Points">Pts</abbr></th>
+				</tr>
+            {% for contestant in all_contestants %}
+                {% if not forloop.counter|divisibleby:2 %}
+                <tr class="even">
+                {% else %}
+                <tr>
+                {% endif %}
+                    <td>{{ forloop.counter }}</td>
+                    <td style="width: 20%">{{ contestant.name }}</td>
+                    <td>{{ contestant.match }}</td>
+                    <td>{{ contestant.win }}</td>
+                    <td>{{ contestant.draw }}</td>
+                    <td>{{ contestant.loss }}</td>
+                    <td>{{ contestant.goal_for }}:{{ contestant.goal_against }}</td>
+                    <td>{{ contestant.diff }}</td>
+                    <td>{{ contestant.points }}</td>
+                    </tr>
+            {% endfor %}
+			</table>
+			
+			{% for result in all_results %}
+                {% with pairs=league.teams|div:2 %}
+                    {% if forloop.counter0|divisibleby:pairs %}
+                        {% with count=forloop.counter0|div:pairs %}
+                            <p class="label label-orange">Fixture {{ count|add:1 }}</p><br />
+                            <table class="data-table2">
+                                <tr>
+					                <th>Replay</th>
+					                <th>Red Team</th>
+                                    <th>Score</th>
+                                    <th>Blue Team</th>
+                                    {% if visible %}<th>Admin</th>{% else %}<th>Updated</th>{% endif %}
+				                </tr>
+                        {% endwith %}
+                    {% endif %}
+                {% endwith %}
+        
+                {% if not forloop.counter|divisibleby:2 %}
+                    <tr class="even">
+                {% else %}
+                    <tr>
+                {% endif %}
+                    <td>{% if result.replay == 1 %}{% if visible %}<abbr title="This action overwrite previous replay!"><img src="{{ STATIC_URL}}/img/red_circle2.png" /></abbr> <a href="{% url 'leagues:set_replay' result.id %}">Set replay</a>{% else %}<a href="{{ MEDIA_URL }}replays/league_{{ result.id }}.hbr">Watch</a>{% endif %} {% else %} {% if visible %}<abbr title="First upload, OK :)"><img src="{{ STATIC_URL }}/img/green_circle2.png" /></abbr> <a href="{% url 'leagues:set_replay' result.id %}">Set replay</a>{% else %} - {% endif %}{% endif %}</td>
+                    <td>{{ result.contestant1 }}</td>
+                    <td>{% if result.result1 >= 0 and result.result2 >= 0 %}{{ result.result1 }} : {{ result.result2 }}{% else %} - {% endif %}</td>
+                    <td>{{ result.contestant2 }}</td>
+                    <td>{% if visible %}{% if result.result1 >= 0 and result.result2 >= 0 %}<a href="{% url 'leagues:clear_score' result.id %}">Clear score</a>{% else %}<a href="{% url 'leagues:set_score' result.id %}">Set score</a>{% endif %}{% else %}{% if result.result1 >= 0 and result.result2 >= 0 %}<span class=" quiet small">{{ result.updated|date:"d.m.Y H:i" }}</span>{% else %}<span class=" quiet small">-</span>{% endif %}{% endif %}</td>
+                    </tr>
+                    
+                {% with pairs=league.teams|div:2 %}
+                    {% if forloop.counter|divisibleby:pairs %}
+                        </table>
+                    {% endif %}
+                {% endwith %}
+    
+            {% endfor %}
+
+		</div>
+
+		<div class="clearer">&nbsp;</div>
+
+	</div>
+
+{% endblock %}
