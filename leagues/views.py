@@ -270,7 +270,6 @@ def clear_score(request, result_id):
     results = get_object_or_404(Results, pk=result_id)
 
     if request.session.get('league_id', False) and request.session['league_id'] == results.league.id:
-        can_clear_score = True
         if results.result1 >= 0 and results.result2 >= 0:
             if request.method == 'POST':
                 if results.result1 > results.result2:
@@ -290,6 +289,7 @@ def clear_score(request, result_id):
                 
                     results.result1 = -1
                     results.result2 = -1
+                    results.replay = 0
                     results.save()
                 elif results.result2 > results.result1:
                     results.contestant2.match -= 1
@@ -308,6 +308,7 @@ def clear_score(request, result_id):
                 
                     results.result1 = -1
                     results.result2 = -1
+                    results.replay = 0
                     results.save()
                 elif results.result1 == results.result2:
                     results.contestant1.match -= 1
@@ -326,14 +327,15 @@ def clear_score(request, result_id):
                 
                     results.result1 = -1
                     results.result2 = -1
+                    results.replay = 0
                     results.save()
         
                 return HttpResponseRedirect(reverse('leagues:detail', args=(results.league.id,)))
                 
         else:
-            can_clear_score = False
+            return HttpResponseRedirect(reverse('leagues:detail', args=(results.league.id,)))
             
-        return render(request, 'leagues/clear_score.html', {'can_clear_score': can_clear_score})
+        return render(request, 'leagues/clear_score.html')
     else:
         return HttpResponseRedirect(reverse('leagues:detail', args=(results.league.id,)))
 
@@ -342,23 +344,27 @@ def set_replay(request, result_id):
     
     if request.session.get('league_id', False) and request.session['league_id'] == results.league.id:
         can_upload_replay = True
-        if request.method == 'POST':
-            form = UploadForm(request.POST, request.FILES)
-            if form.is_valid():
-                replay = request.FILES['replay'].read()
-                hbrp = replay[4:4+4]
-                hbrp_version = int(struct.unpack('i', replay[0:0+4])[0])
+        if results.result1 >= 0 and results.result2 >= 0:
+            if request.method == 'POST':
+                form = UploadForm(request.POST, request.FILES)
+                if form.is_valid():
+                    replay = request.FILES['replay'].read()
+                    hbrp = replay[4:4+4]
+                    hbrp_version = int(struct.unpack('i', replay[0:0+4])[0])
                 
-                if hbrp == 'HBRP' and hbrp_version > 5:
-                    full_replay_name = 'league_'+str(results.id)+'.hbr'
-                    handle_uploaded_file(request.FILES['replay'], full_replay_name)
-                    results.replay = 1
-                    results.save()
-                    return HttpResponseRedirect(reverse('leagues:detail', args=(results.league.id,)))
-                else:
-                    can_upload_replay = False
+                    if hbrp == 'HBRP' and hbrp_version > 5:
+                        full_replay_name = 'league_'+str(results.id)+'.hbr'
+                        handle_uploaded_file(request.FILES['replay'], full_replay_name)
+                        results.replay = 1
+                        results.save()
+                        return HttpResponseRedirect(reverse('leagues:detail', args=(results.league.id,)))
+                    else:
+                        can_upload_replay = False
+            else:
+                form = UploadForm()
         else:
-            form = UploadForm()
+            return HttpResponseRedirect(reverse('leagues:detail', args=(results.league.id,)))
+            
         return render(request, 'leagues/set_replay.html', {'form': form, 'can_upload_replay': can_upload_replay})
     else:
         return HttpResponseRedirect(reverse('leagues:detail', args=(results.league.id,)))
