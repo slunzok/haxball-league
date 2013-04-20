@@ -74,7 +74,7 @@
                 {% else %}
                     <tr>
                 {% endif %}
-                    <td>{% if result.replay == 1 %}{% if visible %}<abbr title="This action overwrite previous replay!"><img src="{{ STATIC_URL}}/img/red_circle2.png" /></abbr> <a href="{% url 'leagues:set_replay' result.id %}">Set replay</a>{% else %}<a href="{{ MEDIA_URL }}replays/league_{{ result.id }}.hbr">Watch</a>{% endif %} {% else %} {% if visible %}<abbr title="First upload, OK :)"><img src="{{ STATIC_URL }}/img/green_circle2.png" /></abbr> <a href="{% url 'leagues:set_replay' result.id %}">Set replay</a>{% else %} - {% endif %}{% endif %}</td>
+                    <td>{% if result.replay == 1 %}{% if visible %}<abbr title="This action overwrite previous replay!"><img src="{{ STATIC_URL}}/img/red_circle2.png" /></abbr> <a href="{% url 'leagues:set_replay' result.id %}">Set replay</a>{% else %}<a href="{{ MEDIA_URL }}replays/league_{{ result.id }}.hbr">Watch</a>{% endif %} {% else %} {% if visible %}{% if result.result1 >= 0 and result.result2 >= 0 %}<abbr title="First upload, OK :)"><img src="{{ STATIC_URL }}/img/green_circle2.png" /></abbr> <a href="{% url 'leagues:set_replay' result.id %}">Set replay</a>{% else %} - {% endif %}{% else %} - {% endif %}{% endif %}</td>
                     <td>{{ result.contestant1 }}</td>
                     <td>{% if result.result1 >= 0 and result.result2 >= 0 %}{{ result.result1 }} : {{ result.result2 }}{% else %} - {% endif %}</td>
                     <td>{{ result.contestant2 }}</td>
