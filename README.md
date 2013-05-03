@@ -4,14 +4,10 @@
 
 * HaxBall League is a community website, where you can create and manage your own league (add/edit teams, edit/set scores and replays, automatic generate the ranking table). 
 
-**Demo site**
-
-* [HaxBall League - demo](http://slunzok.pavo.uberspace.de/haxball/leagues/)
-
 **Screenshots**
 
-<img src='http://slunzok.pavo.uberspace.de/static/screenshots/001_002.png'/>
-<img src='http://slunzok.pavo.uberspace.de/static/screenshots/003_004.png'/>
+<img src='https://raw.github.com/slunzok/haxball-league/master/screenshots/001_002.png'/>
+<img src='https://raw.github.com/slunzok/haxball-league/master/screenshots/003_004.png'/>
 
 * [HaxBall League - more screenshots](https://github.com/slunzok/haxball-league/tree/master/screenshots)
 
